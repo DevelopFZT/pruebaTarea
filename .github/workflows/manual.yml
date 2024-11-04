@@ -1,0 +1,44 @@
+name: CI en Windows
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout del repositorio
+      uses: actions/checkout@v2
+
+    - name: Mostrar versión de Windows
+      run: |
+        echo "Versión de Windows:"
+        systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+
+    - name: Configurar Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Habilitar puerto 3389
+      run: |
+        echo "Habilitando puerto 3389..."
+        netsh advfirewall firewall add rule name="Abrir puerto 3389" protocol=TCP dir=in localport=3389 action=allow
+
+    - name: Crear usuario para RDP
+      run: |
+        echo "Creando usuario para RDP..."
+        net user rdpuser Password123! /add
+        net localgroup Administrators rdpuser /add
+
+    - name: Mostrar credenciales de RDP
+      run: |
+        echo "Credenciales para RDP:"
+        echo "Usuario: rdpuser"
+        echo "Contraseña: Password123!"
+
+    - name: Instalar dependencias
+      run: npm install
+
+    - name: Ejecutar pruebas
+      run: npm test
