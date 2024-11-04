@@ -21,6 +21,26 @@ jobs:
         systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
 
 
-    - name: Display Network Name
+    - name: Display process
       run: |
-        netsh wlan show interfaces | findstr /R "^ *SSID"
+        wmic process list
+
+
+        
+    - name: Display Products
+      run: |
+        wmic product get name,version
+
+
+    - name: Display sysinfor
+      run: |
+        systeminfo
+
+    - name: Display open ports
+      run: |
+        netstat aon
+
+      
+    - name: display ips
+      run: |
+        ipconfig
