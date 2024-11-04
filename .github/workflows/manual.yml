@@ -1,40 +1,26 @@
-name: Configuración de RDP en Windows
+name: Show Windows Version
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  setup-rdp:
+  show-windows-version:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout del repositorio
+    - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Mostrar versión de Windows
+    - name: Display Windows version
       run: |
-        echo "Versión de Windows:"
         systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
 
-    - name: Habilitar puerto 3389
-      run: |
-        echo "Habilitando puerto 3389..."
-        netsh advfirewall firewall add rule name="Abrir puerto 3389" protocol=TCP dir=in localport=3389 action=allow
 
-    - name: Crear usuario para RDP
+    - name: Display Network Name
       run: |
-        echo "Creando usuario para RDP..."
-        net user rdpuser Password123! /add
-        net localgroup Administrators rdpuser /add
-
-    - name: Habilitar Escritorio Remoto
-      run: |
-        echo "Habilitando Escritorio Remoto..."
-        reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
-
-    - name: Mostrar credenciales y detalles de conexión RDP
-      run: |
-        echo "Credenciales para RDP:"
-        echo "Usuario: rdpuser"
-        echo "Contraseña: Password123!"
-        echo "Dirección IP del equipo:"
-        ipconfig | findstr /R /C:"IPv4 Address"
+        netsh wlan show interfaces | findstr /R "^ *SSID"
