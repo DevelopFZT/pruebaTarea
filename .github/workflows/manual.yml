@@ -24,14 +24,7 @@ jobs:
     - name: Display process
       run: |
         wmic process list
-
-
         
-    - name: Display Products
-      run: |
-        wmic product get name,version
-
-
     - name: Display sysinfor
       run: |
         systeminfo
