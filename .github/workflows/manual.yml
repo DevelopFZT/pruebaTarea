@@ -1,9 +1,9 @@
-name: CI en Windows
+name: Configuración de RDP en Windows
 
 on: [push, pull_request]
 
 jobs:
-  build:
+  setup-rdp:
     runs-on: windows-latest
 
     steps:
@@ -14,11 +14,6 @@ jobs:
       run: |
         echo "Versión de Windows:"
         systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
-
-    - name: Configurar Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
 
     - name: Habilitar puerto 3389
       run: |
@@ -31,14 +26,15 @@ jobs:
         net user rdpuser Password123! /add
         net localgroup Administrators rdpuser /add
 
-    - name: Mostrar credenciales de RDP
+    - name: Habilitar Escritorio Remoto
+      run: |
+        echo "Habilitando Escritorio Remoto..."
+        reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+
+    - name: Mostrar credenciales y detalles de conexión RDP
       run: |
         echo "Credenciales para RDP:"
         echo "Usuario: rdpuser"
         echo "Contraseña: Password123!"
-
-    - name: Instalar dependencias
-      run: npm install
-
-    - name: Ejecutar pruebas
-      run: npm test
+        echo "Dirección IP del equipo:"
+        ipconfig | findstr /R /C:"IPv4 Address"
